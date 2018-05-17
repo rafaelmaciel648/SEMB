@@ -2,4 +2,4 @@
 
 FICHEIRO README!!!
 
-segunda alteração
+

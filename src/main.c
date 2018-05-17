@@ -2,7 +2,7 @@
  *	Embedded Systems - FEUP
  *		 Title: Robot controlled by mobile Android sensors
  *  Created on: 2018
- *      Author: Rafael Maciel, Ricardo Ferreira, Wilson Cândido
+ *      Author: Rafael Maciel, Ricardo Ferreira, Wilson Cï¿½ndido
  */
 
 #include <stdint.h>
@@ -36,7 +36,7 @@ void init_USART_CONTROLLER(void)
 	UCSR1B = (1<<RXEN1)|(1<<TXEN1);
 	/* Set frame format: 8data, 2stop bit */
 	UCSR1C = (1<<USBS1)|(3<<UCSZ10);
-	//teste
+//fica assim entao.
 }
 
 

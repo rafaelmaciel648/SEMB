@@ -48,7 +48,7 @@ all: SEMB.elf secondary-outputs
 SEMB.elf: $(OBJS) $(USER_OBJS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: AVR C Linker'
-	avr-gcc -Wl,-Map,SEMB.map -L"C:\Users\rafae\OneDrive\Documentos\WorkspaceEclipseC\SEMB\libraries" -mmcu=atmega2560 -o "SEMB.elf" $(OBJS) $(USER_OBJS) $(LIBS)
+	avr-gcc -Wl,-Map,SEMB.map -L/home/wilson/Main/git_stuff/SEMB/libraries -mmcu=atmega2560 -o "SEMB.elf" $(OBJS) $(USER_OBJS) $(LIBS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 

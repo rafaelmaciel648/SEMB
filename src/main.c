@@ -36,7 +36,11 @@ void init_USART_CONTROLLER(void)
 	UCSR1B = (1<<RXEN1)|(1<<TXEN1);
 	/* Set frame format: 8data, 2stop bit */
 	UCSR1C = (1<<USBS1)|(3<<UCSZ10);
+<<<<<<< HEAD
 	//teste wilson
+=======
+	//teste
+>>>>>>> branch 'master' of https://github.com/rafaelmaciel648/SEMB.git
 }
 
 

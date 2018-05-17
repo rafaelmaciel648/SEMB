@@ -36,13 +36,13 @@ void init_USART_CONTROLLER(void)
 	UCSR1B = (1<<RXEN1)|(1<<TXEN1);
 	/* Set frame format: 8data, 2stop bit */
 	UCSR1C = (1<<USBS1)|(3<<UCSZ10);
-//fica assim entao.
 }
 
 
 int main(void)
 {
 	init_USART_MONITOR();
+//	uint8_t aux = U
 	init_printf_tools();
 	sei();
 	init_mili_timers();

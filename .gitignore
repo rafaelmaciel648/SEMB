@@ -1,4 +1,5 @@
-/.cproject/
-/.project/
-/Release/
-/.settings/
+*.cproject
+*.project
+Release/
+.settings/
+projectfiles/

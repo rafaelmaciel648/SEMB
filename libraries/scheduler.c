@@ -24,12 +24,12 @@ int Sched_AddT(void (*f)(void), int d, int p){
 	return -1;
 }
 
-void int_handler(void){
-	disable_interrupts();
-	Sched_Schedule();
-	Sched_Dispatch();
-	enable_interrupts();
-}
+//void int_handler(void){
+//	disable_interrupts();
+//	Sched_Schedule();
+//	Sched_Dispatch();
+//	enable_interrupts();
+//}
 
 void Sched_Schedule(void){
 
@@ -54,9 +54,9 @@ void Sched_Dispatch(void){
 		if (Tasks[x].exec) {
 			Tasks[x].exec--;
 			cur_task = x;
-			enable_interrupts();
+		//	enable_interrupts();
 			Tasks[x].func();
-			disable_interrupts();
+			//disable_interrupts();
 			cur_task = prev_task;
 			/*Delete if one-shot */
 			if (!Tasks[x].period)

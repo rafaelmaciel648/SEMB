@@ -1,14 +1,16 @@
 /*
  * scheduler.h
  *
- *  Created on: 8 May 2018
- *      Author: rafae
+ * Library with structures and functions for manage the schedule of task in system.
+ *
  */
 
 #ifndef LIBRARIES_SCHEDULER_H_
 #define LIBRARIES_SCHEDULER_H_
 
 typedef struct {
+	/* priority 0->HIGH 18->LOW */
+	int priority;
 	/* period in ticks */
 	int period;
 	/* ticks to activate */
@@ -19,8 +21,6 @@ typedef struct {
 	int exec;
 } Sched_Task_t;
 
-Sched_Task_t Tasks[20];
-int cur_task = 20;
 
 
 /* Initialise data structures.
@@ -33,8 +33,9 @@ int Sched_Init(void);
  * *f - pointer to the task function
  * d - delay of execution
  * p - period
+ * prio - priority
  */
-int Sched_AddT(void (*f)(void), int d, int p);
+int Sched_AddT(void (*f)(void), int d, int p, int prio);
 
 
 /* Verifies if any task needs to be activated, and if so,

@@ -8,12 +8,16 @@
 #include <stdint.h>
 #include <avr/io.h>
 #include <avr/interrupt.h>
+#include <tasks.h>
 
 #include "printf_tools.h"
 #include "timer_tools.h"
+#include "tasks.h"
+#include "scheduler.h"
+#include "utils.h"
 
-#define	baud_monitor 57600		// baud rate for serial monitor in computer
-#define baud_ctrl 9600		// baud rate for Bluetooth communication
+#define	baud_monitor 57600u		// baud rate for serial monitor in computer
+#define baud_ctrl 9600u			// baud rate for Bluetooth communication
 // Caution: erroneous result if F_CPU is not correctly defined
 #define baud_monitor_reg ((F_CPU/(16*baud_monitor))-1)  //baud divider
 #define baud_ctrl_reg ((F_CPU/(16*baud_ctrl))-1)	//baud divider
@@ -36,16 +40,27 @@ void init_USART_CONTROLLER(void)
 	UCSR1B = (1<<RXEN1)|(1<<TXEN1);
 	/* Set frame format: 8data, 2stop bit */
 	UCSR1C = (1<<USBS1)|(3<<UCSZ10);
+
+	/* Set external interrupt to check the communication status (INT4) */
+	EICRB = (3<<ISC00);
+
 }
 
+ISR(INT4_vect)
+{
+	printf("Interrupt detected at INT4\n");
+}
 
 int main(void)
 {
-	init_USART_MONITOR();
-//	uint8_t aux = U
-	init_printf_tools();
+	init_USART_MONITOR();			//init serial monitor communication
+	init_USART_CONTROLLER();		//init serial bluetooth communication
+	init_printf_tools();			//init printf tools
 	sei();
 	init_mili_timers();
+
+	Sched_AddT(&connectionLost, 10, 10, 10);
+
 
 	mili_timer T1, T3, T10, Tshow;           // Timers
 

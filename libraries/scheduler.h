@@ -49,4 +49,10 @@ void Sched_Schedule(void);
  */
 void Sched_Dispatch(void);
 
+
+/* int_handler is called periodicly with interrupt timer 1.
+ * Calls periodicly Sched_Schedule() and Sched_Dispatch().
+ */
+void int_handler(void);
+
 #endif /* LIBRARIES_SCHEDULER_H_ */

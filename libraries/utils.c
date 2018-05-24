@@ -6,21 +6,33 @@
 
 #include <avr/io.h>
 
-void toogle_output(){
+#define V_RIGHT OCR4C
+#define V_LEFT OCR4B
 
+void leftMotorForward(){
+	PORTE |= (1<<PE5);
+	PORTG &= ~(1<<PG5);
 }
 
-void clear_output(){
-
+void leftMotorBackward(){
+	PORTE &= ~(1<<PE5);
+	PORTG |= (1<<PG5);
 }
 
-void set_output(){
-
+void rightMotorForward(){
+	PORTH |= (1<<PH3);
+	PORTE &= ~(1<<PE3);
 }
 
-void outputMode(){
-
+void rightMotorBackward(){
+	PORTH &= ~(1<<PH3);
+	PORTE |= (1<<PE3);
 }
 
-void inputMode(){
+void leftVelocity(uint8_t vel){
+	V_LEFT = vel;
+}
+
+void rightVelocity(uint8_t vel){
+	V_RIGHT = vel;
 }

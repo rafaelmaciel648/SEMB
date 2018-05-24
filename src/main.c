@@ -27,13 +27,13 @@
 #define M2_FORWARD 0
 #define M2_BACK 0
 
-static int *sensors_ptr;
+int *sensors_ptr;					// Pointer to Sensor Data Array
 
-ISR(INT4_vect)
-{
-	printf("Interrupt detected at INT4\n");
-
-}
+//ISR(INT4_vect)
+//{
+//	printf("Interrupt detected at INT4\n");
+//
+//}
 
 void init_PWM(){
 
@@ -59,11 +59,10 @@ void configIO(){
 	DDRE &= ~(1<<DDE4);
 
 	/* BLUETOOTH STATUS */
-	EICRB = (0<<ISC41);	// Set external interrupt to check the communication status (INT4)
-	EIMSK = (1<<INT4);
+	//EICRB = (0<<ISC41);	// Set external interrupt to check the communication status (INT4)
+	//EIMSK = (1<<INT4);
 }
 
-int* readData();
 
 int main(void)
 {
@@ -73,18 +72,37 @@ int main(void)
 	uart1_init( UART_BAUD_SELECT(UART1_BAUD_RATE,F_CPU) );	// Initialise Serial Bluetooth Communication
 	init_PWM();
 	configIO();
+	Sched_Init();
+
+	mili_timer readData_T, robotMotion_T;
 
 	int ypr[3];
+	ypr[0]=0;
+	ypr[1]=0;
+	ypr[2]=0;
 
 	sensors_ptr=ypr;
 
-//	Sched_AddT(readData())
+//	if(!Sched_AddT(readData, 10, 10, 0)){
+//		printf("Error adding task1\n");
+//	}
+//	if(!Sched_AddT(robotMotion, 17, 10, 1)){
+//		printf("Error adding task2\n");
+//	}
+
 //	int *sensores;
 
 	while(1){
 
-//		sensores = readData();
-//		robotMotion(sensores);
+		//start_timer(&readData_T, 500);		// Init timer for readData task
+		readData();
+		//printf("readData() task execution time: %u\n",get_timer_time(&readData_T));
+
+		//start_timer(&robotMotion_T, 500);		// Init timer for robotMotion task
+		robotMotion();
+		//printf("robotMotion() task execution time: %u\n",get_timer_time(&robotMotion_T));
+
+		//printf("%d - %d - %d || %d - %d - %d\n",ypr[0],ypr[1],ypr[2],sensors_ptr[0],sensors_ptr[1],sensors_ptr[2]);
 
 	}
 }
@@ -97,123 +115,9 @@ int main(void)
  *
  * Set as output:		DDRA |= (1<<DDA4);
  * Set as input:		DDRA &= ~(1<<DDA4);
- * Set pin to high:		PORTA |= (1<<PA4)  ou  PORTA |= _BV(PA4);
- * Set pin to low:		PORTA &= ~(1<<PA4)  ou  PORTE &= ~_BV(PE4);
- * Toogle pin:			PORTA ^= (1<<PA4)
+ * Set pin to high:		PORTA |= (1<<PA4);
+ * Set pin to low:		PORTA &= ~(1<<PA4);
+ * Toogle pin:			PORTA ^= (1<<PA4);
  *
  */
-
-
-int* readData(){
-	int i = 0;
-	int done = 0;
-	char a;
-	int read = 0;
-	int comma=0;
-	int sensorA = 0;
-	int sensorB = 0;
-	int sensorC = 0;
-	int minusSensA = 0;
-	int minusSensB = 0;
-	int minusSensC = 0;
-	int sensorAisDone = 0;
-	int sensorBisDone = 0;
-	int sensorCisDone = 0;
-	static int sensores[3];
-
-	while(!done){
-		a = uart1_getc();
-
-		if(a == '\n'){
-			if (minusSensC){ //if if it ends reading sensorC, see if it need negative signal. then after the number is full read, multiplies itc with -1; after, reset the minusSensC.
-
-				sensorC = sensorC * (-1);
-				minusSensC = 0;
-			}
-			break;
-		}
-
-		if(a == '>'){ //waits for the initial character and sets 'read=true'
-
-			read= 1;
-			minusSensA = 0;
-			minusSensB = 0;
-			minusSensC = 0;
-			sensorAisDone = 0;
-			sensorBisDone = 0;
-			sensorCisDone = 0;
-			comma = 0;
-		}
-		if(a == ','){ //finds a comma, which means a new value comes and allows to know which sensor should be filled.
-
-			comma++;
-
-		}
-
-		//-----------------------------sensA
-
-		if(read && comma == 2 && a=='-'){ //SensorA will be a negative number.
-			minusSensA = 1;
-
-		}
-		if(read && comma == 2 && (! sensorAisDone) && (a>47) && (a<58)){ //its time to read, its after the 1st comma, and its a number: so save it for the 1st sensor
-			sensorA = (sensorA*10 + a) - 48;
-			/*if(a== '0'){
-				sensorA = sensorA*10;
-			}
-			else{
-				sensorA = (sensorA*10 + a) - 48;
-			}*/
-
-		}
-		if(read && comma == 2 && (a == '.')){
-			sensorAisDone = 1;
-		}
-		if (minusSensA && (comma > 2)){ //if it starts reading sensorB and caught a minus signal for sensA, then after the number is full read, multiplies it with -1; after, reset the minusSensA.
-			//printf("\n multiplicacaos !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-			sensorA = sensorA * (-1);
-			minusSensA = 0;
-		}
-
-		//------------------sensB
-		if(read && comma == 3 && a=='-'){ //SensorB will be a negative number.
-			minusSensB = 1;
-
-		}
-		if(read && comma == 3 && (! sensorBisDone) && (a>47) && (a<58)){ //its time to read, its after the 1st comma, and its a number: so save it for the 1st sensor
-			sensorB = (sensorB*10 + a) - 48;
-		}
-		if(read && comma == 3 && (a == '.')){
-			sensorBisDone = 1;
-		}
-		if (minusSensB && (comma > 3)){ //if it starts reading sensorC and caught a minus signal for sensA, then after the number is full read, multiplies it with -1; after, reset the minusSensB.
-
-			sensorB = sensorB * (-1);
-			minusSensB = 0;
-		}
-
-		//------------------sensC
-		if(read && comma == 4 && a=='-'){ //SensorC will be a negative number.
-			minusSensC = 1;
-
-		}
-		if(read && comma == 4 && (! sensorCisDone) && (a>47) && (a<58)){ //its time to read, its after the 1st comma, and its a number: so save it for the 1st sensor
-
-			sensorC = (sensorC*10 + a) - 48;
-		}
-		if(read && comma == 4 && (a == '.')){
-			sensorCisDone = 1;
-
-
-		}
-
-		i++;
-	}
-	sensores[0] = sensorA;
-	sensores[1] = sensorB;
-	sensores[2] = sensorC;
-	return sensores;
-}
-
-
 

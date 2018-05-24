@@ -33,9 +33,9 @@ int Sched_Init(void);
  * *f - pointer to the task function
  * d - delay of execution
  * p - period
- * prio - priority
+ * i - priority
  */
-int Sched_AddT(void (*f)(void), int d, int p, int prio);
+int Sched_AddT(void (*f)(void), int d, int p, int i);
 
 
 /* Verifies if any task needs to be activated, and if so,

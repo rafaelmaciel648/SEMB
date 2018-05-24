@@ -49,11 +49,6 @@ ISR(TIMER0_OVF_vect)
   TCNT0 = TCNT0 + (256 - TIMER_TICKS);
 
   tick_count++;
-  /*if (tick_count & 0x80) {
-    port_bit_set(LED);
-  } else {
-    port_bit_clear(LED);
-  }*/
 }
 
 void init_mili_timers(void)

@@ -21,7 +21,7 @@ void connectionLost();
  * Periodic task to measure distance between robot and objects.
  * Execute robot stop routine if distance is short.
  */
-//void sonarDistance();
+void sonarDistance();
 
 
 /*
@@ -36,7 +36,8 @@ void readData();
  */
 void robotMotion();
 
-void task1();
-void task2();
+
+void lcdRefresh();
+
 
 #endif /* LIBRARIES_TASKS_H_ */

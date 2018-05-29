@@ -692,7 +692,7 @@ Returns:  lower byte:  received byte from ringbuffer
           higher byte: last receive error
 **************************************************************************/
 unsigned int uart1_getc(void)
-{    
+{
     unsigned char tmptail;
     unsigned int  data;
     unsigned char lastRxError;
@@ -713,6 +713,7 @@ unsigned int uart1_getc(void)
     UART1_RxTail = tmptail; 
     
     UART1_LastRxError = 0;
+
     return (lastRxError << 8) + data;
 
 }/* uart1_getc */

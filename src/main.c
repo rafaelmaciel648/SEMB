@@ -22,33 +22,35 @@
 
 
 #define UART1_BAUD_RATE      57600	// baud rate for Bluetooth Communication
-#define EN_MOTOR1 0
-#define EN_MOTOR2 0
-#define M1_FORWARD 0
-#define M1_BACK 0
-#define M2_FORWARD 0
-#define M2_BACK 0
+
 
 int16_t *sensors_ptr;					// Pointer to Sensor Data Array
 int16_t distance;
 uint8_t *str_lcd_l1;
 uint8_t *str_lcd_l2;
 
-//uint8_t lostconnection=0;
+uint8_t str1[] = "Embedded Systems";
+uint8_t str2[] = "Press the button";
+uint8_t str3[] = "Wait Connection ";
+uint8_t str4[] = "Connection Lost ";
+uint8_t str5[] = "Connecting...   ";
+
+uint8_t lostconnection=0;
 
 
-//ISR(INT4_vect)
-//{
-//	lostconnection++;
-//
-//	if(lostconnection > 16){			// Means 1us interrupt
-//		for(uint8_t i; i<10; i++){
-//			Tasks[i].func = 0;
-//		}
-//		stopRobot();
-//		lostconnection = 0;
-//	}
-//}
+ISR(INT4_vect)
+{
+	lostconnection++;
+	if(lostconnection > 16){			// Means 1us interrupt
+		stopRobot();
+		clear_lcd();
+		print_lcd(str4,1,0);
+		print_lcd(str5,2,0);
+		while( !(PINE & (1<<PE4)) );
+		lostconnection = 0;
+	}
+}
+
 
 int main(void)
 {
@@ -62,29 +64,35 @@ int main(void)
 	init_lcd();
 	init_sonar();
 
-	uint8_t str1[] = "Embedded";
-	uint8_t str2[] = "Systems";
-
-	print_lcd(str1,1,0);
-	print_lcd(str2,1,9);
-
 	int16_t ypr[3];
 	ypr[0]=0;
 	ypr[1]=0;
 	ypr[2]=0;
 	sensors_ptr=ypr;
 
-	uint8_t line1[17];
+	uint8_t line1[17] = "Embedded Systems";
 	uint8_t line2[17];
 	str_lcd_l1 = line1;
 	str_lcd_l2 = line2;
 
+
+
+	print_lcd(str1,1,0);
+
+	//ROUTINE WAITING CONNECTION
+	print_lcd(str3,2,0);
+	while( !(PINE & (1<<PE4)) );
+	EIMSK = (1<<INT4);
+
 	//ROUTINE OF READY BUTTOM
+	print_lcd(str2,2,0);
+	while( !(PINC & (1<<PC1)) );
 
 	Sched_Tasks();
 
 	while(1){
 		// infinite loop
+
 	}
 }
 

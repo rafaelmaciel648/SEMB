@@ -88,4 +88,6 @@ void print_lcd(uint8_t* str, uint8_t line, uint8_t offset);
 
 void lcd_function();
 
+void clear_lcd();
+
 #endif /* LIBRARIES_LCD_H_ */

@@ -25,7 +25,7 @@
 
 extern int *sensors_ptr;
 extern uint16_t distance;
-//extern uint8_t *str_lcd_l1;
+extern uint8_t *str_lcd_l1;
 extern uint8_t *str_lcd_l2;
 
 
@@ -229,7 +229,6 @@ void sonarDistance(){
 void lcdRefresh(){
 	PORTC |= (1<<PC0);
 
-
 	uint8_t str_aux[6]={'\0','\0','\0','\0','\0','\0'};
 
 	int16ToString(distance,str_aux);			// Convert int to string
@@ -241,6 +240,7 @@ void lcdRefresh(){
 	strcat((char*)str_lcd_l2," cm");
 	strcat((char*)str_lcd_l2,"\0");
 
+	print_lcd(str_lcd_l1,1,0);
 	print_lcd(str_lcd_l2,2,0);
 
 	PORTC &= ~(1<<PC0);

@@ -55,14 +55,12 @@ void moveBackward(){
 }
 
 void stopRobot(){
-	// M1 stop
-	leftMotorForward();
-	leftMotorBackward();
-	// M2 stop
-	rightMotorForward();
-	rightMotorBackward();
-	V_LEFT = 0;
-	V_RIGHT = 0;
+	PORTE |= (1<<PE5);
+	PORTG |= (1<<PG5);
+	PORTH |= (1<<PH3);
+	PORTE |= (1<<PE3);
+	V_LEFT = 150;
+	V_RIGHT = 150;
 }
 
 uint8_t int16ToString(int16_t number, uint8_t *buffer){
@@ -135,7 +133,8 @@ void configIO(){
 	DDRC |= (1<<DDC0);		// Output execution task lcdRefresh()
 
 	/* BLUETOOTH STATUS */
-//	DDRE &= ~(1<<DDE4);		//Bluetooth Esternal Interrupt Pin
+	DDRE &= ~(1<<DDE4);		//Bluetooth Esternal Interrupt Pin
+	EICRB = (0<<ISC41)|(0<<ISC40);
 //	EICRB = (0<<ISC41);		// Set external interrupt to check the communication status (INT4)
 //	EIMSK = (1<<INT4);
 
@@ -144,5 +143,6 @@ void configIO(){
 	DDRL &= ~(1<<DDL1);		// ECHO input
 
 
-	/*  */
+	/* Button Ready */
+	DDRC &= ~(1<<DDC1);
 }

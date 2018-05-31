@@ -29,4 +29,8 @@ uint8_t int16ToString(int16_t number, uint8_t *buffer);
 
 void clear_string(uint8_t *str);
 
+void init_PWM();
+
+void configIO();
+
 #endif /* LIBRARIES_UTILS_H_ */

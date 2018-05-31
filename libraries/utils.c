@@ -106,3 +106,43 @@ void clear_string(uint8_t *str){
 		str[i]='\0';
 	}
 }
+
+void init_PWM(){
+
+	/* TIMER 4 - PWM MOTOR 1 e 2 */
+	DDRH |= (1<<DDH4)|(1<<DDH5);
+
+	/* Set Timer4 to compare mode, set OC4A and OC4B on compare match, clear on TOP */
+	TCCR4A = ( (1<<COM4B1)|(1<<COM4C1)|(1<<WGM40)  );
+	/* Set Timer4 No Prescaling, Fast 8-bit PWM */
+	TCCR4B = ( (1<<CS40)|(1<<WGM42) );
+
+	OCR4B=0;
+	OCR4C=0;
+}
+
+void configIO(){
+	/* MOTOR OUTPUTS */
+	DDRE |= (1<<DDE5);		// IN1 -> Motor 1 forward
+	DDRG |= (1<<DDG5);		// IN2 -> Motor 1 backward
+	DDRE |= (1<<DDE3);		// IN3 -> Motor 2 backward
+	DDRH |= (1<<DDH3);		// IN4 -> Motor 2 forward
+
+	/* PINS FOR OUTPUT TIME VALUES OF TASKS */
+	DDRC |= (1<<DDC6);		// Output execution task readData()
+	DDRC |= (1<<DDC4);		// Output execution task robotMotion()
+	DDRC |= (1<<DDC2);		// Output execution task sonarDistance()
+	DDRC |= (1<<DDC0);		// Output execution task lcdRefresh()
+
+	/* BLUETOOTH STATUS */
+//	DDRE &= ~(1<<DDE4);		//Bluetooth Esternal Interrupt Pin
+//	EICRB = (0<<ISC41);		// Set external interrupt to check the communication status (INT4)
+//	EIMSK = (1<<INT4);
+
+	/* Sonar Pins */
+	DDRL |= (1<<DDL3);		// TRIG output
+	DDRL &= ~(1<<DDL1);		// ECHO input
+
+
+	/*  */
+}

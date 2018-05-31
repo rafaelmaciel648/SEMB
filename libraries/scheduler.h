@@ -55,4 +55,10 @@ void Sched_Dispatch(void);
  */
 void int_handler(void);
 
+
+/*
+ *
+ */
+void Sched_Tasks();
+
 #endif /* LIBRARIES_SCHEDULER_H_ */

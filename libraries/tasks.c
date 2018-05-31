@@ -40,10 +40,10 @@ void robotMotion(){ ///CHANGE sensors_ptr[2] para outro sensor!!!!!!!!!!!!
 
 	//printf("%d   %d\n",sensors_ptr[1], sensors_ptr[2]);
 
-	uint8_t vel;
+	uint8_t vel=0;
 	uint8_t rot;
 
-	if( (sensors_ptr[2]) >=0 ){						// MOVE FORWARD
+	if( ( (sensors_ptr[2]) > 0) ){	// MOVE BACKWARD
 		if(sensors_ptr[2] >= 85){
 			vel = MAX_VEL;
 		}
@@ -57,8 +57,8 @@ void robotMotion(){ ///CHANGE sensors_ptr[2] para outro sensor!!!!!!!!!!!!
 //		rightVelocity(vel);
 
 	}
-	else{
-		if(sensors_ptr[2] <= -85){					// MOVE BACKWARD
+	else if( ((sensors_ptr[2]) <= 0) && (distance > 10) ){
+		if(sensors_ptr[2] <= -85){						// MOVE FORWARD
 			vel = MAX_VEL;
 		}
 		else{
@@ -71,7 +71,7 @@ void robotMotion(){ ///CHANGE sensors_ptr[2] para outro sensor!!!!!!!!!!!!
 //		rightVelocity(vel);
 	}
 
-	if( (sensors_ptr[1]) >=0 ){						// TURN LEFT
+	if( (sensors_ptr[1]) >=0 ){							// TURN LEFT
 		if(sensors_ptr[1] >= 50){
 			rot = MAX_ROT;
 		}
@@ -84,7 +84,7 @@ void robotMotion(){ ///CHANGE sensors_ptr[2] para outro sensor!!!!!!!!!!!!
 
 	}
 	else{
-		if(sensors_ptr[1] <= -50){					// TURN RIGHT
+		if(sensors_ptr[1] <= -50){						// TURN RIGHT
 			rot = MAX_ROT;
 		}
 		else{
@@ -214,16 +214,22 @@ void readData(){
 
 
 void sonarDistance(){
-	measure_distance();
+	PORTC |= (1<<PC2);
 
-	//printf("Distanceinsonar: %d          ",distance);
+	measure_distance();
 
 	if(distance < 10){
 		stopRobot();
 	}
+
+	PORTC &= ~(1<<PC2);
 }
 
+
 void lcdRefresh(){
+	PORTC |= (1<<PC0);
+
+
 	uint8_t str_aux[6]={'\0','\0','\0','\0','\0','\0'};
 
 	int16ToString(distance,str_aux);			// Convert int to string
@@ -236,6 +242,8 @@ void lcdRefresh(){
 	strcat((char*)str_lcd_l2,"\0");
 
 	print_lcd(str_lcd_l2,2,0);
+
+	PORTC &= ~(1<<PC0);
 }
 
 

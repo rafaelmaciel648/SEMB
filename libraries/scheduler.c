@@ -12,6 +12,7 @@
 #include <avr/interrupt.h>
 
 #include "printf_tools.h"
+#include "tasks.h"
 
 
 uint8_t i;
@@ -19,13 +20,13 @@ uint8_t i;
 Sched_Task_t Tasks[20];
 int cur_task = 20;
 
-#define	TICKS_TO_10MS		((uint16_t)(((double)F_CPU/8)/(100)))
+#define	TICKS_TO_1MS		((uint16_t)(((double)F_CPU/8)/(1000)))
 
 ISR(TIMER1_OVF_vect)
 {
-  // reset timer1 count to give CTRL_FREQ frequency
-  TCNT1 = TCNT1 + (65536 - TICKS_TO_10MS);
-  int_handler();
+	// reset timer1 count to give CTRL_FREQ frequency
+	TCNT1 = TCNT1 + (65536 - TICKS_TO_1MS);
+	int_handler();
 }
 
 int Sched_Init(void){
@@ -104,4 +105,10 @@ void Sched_Dispatch(void){
 	}
 }
 
+void Sched_Tasks(){
+	Sched_AddT(sonarDistance, 0, 5, 1);
+	Sched_AddT(readData, 0, 150, 2);
+	Sched_AddT(robotMotion, 0, 5, 3);
+	Sched_AddT(lcdRefresh, 0, 5, 4);
+}
 

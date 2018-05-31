@@ -18,7 +18,7 @@
 #include "scheduler.h"
 #include "lcd.h"
 #include "sonar.h"
-//#include "utils.h"
+#include "utils.h"
 
 
 #define UART1_BAUD_RATE      57600	// baud rate for Bluetooth Communication
@@ -34,50 +34,21 @@ int16_t distance;
 uint8_t *str_lcd_l1;
 uint8_t *str_lcd_l2;
 
+//uint8_t lostconnection=0;
+
 
 //ISR(INT4_vect)
 //{
-//	printf("Interrupt detected at INT4\n");
+//	lostconnection++;
 //
+//	if(lostconnection > 16){			// Means 1us interrupt
+//		for(uint8_t i; i<10; i++){
+//			Tasks[i].func = 0;
+//		}
+//		stopRobot();
+//		lostconnection = 0;
+//	}
 //}
-
-void init_PWM(){
-
-	/* TIMER 4 - PWM MOTOR 1 e 2 */
-	DDRH |= (1<<DDH4)|(1<<DDH5);
-
-	/* Set Timer4 to compare mode, set OC4A and OC4B on compare match, clear on TOP */
-	TCCR4A = ( (1<<COM4B1)|(1<<COM4C1)|(1<<WGM40)  );
-	/* Set Timer4 No Prescaling, Fast 8-bit PWM */
-	TCCR4B = ( (1<<CS40)|(1<<WGM42) );
-
-	OCR4B=0;
-	OCR4C=0;
-}
-
-void configIO(){
-	/* MOTOR OUTPUTS */
-	DDRE |= (1<<DDE5);		// IN1 -> Motor 1 forward
-	DDRG |= (1<<DDG5);		// IN2 -> Motor 1 backward
-	DDRE |= (1<<DDE3);		// IN3 -> Motor 2 backward
-	DDRH |= (1<<DDH3);		// IN4 -> Motor 2 forward
-
-	DDRC |= (1<<DDC6);		// Output execution task readData()
-	DDRC |= (1<<DDC4);		// Output execution task robotMotion()
-
-	/* BLUETOOTH STATUS */
-	//DDRE &= ~(1<<DDE4);		//Bluetooth Esternal Interrupt Pin
-	//EICRB = (0<<ISC41);		// Set external interrupt to check the communication status (INT4)
-	//EIMSK = (1<<INT4);
-
-	/* Sonar Pins */
-	DDRL |= (1<<DDL3);		// TRIG output
-	DDRL &= ~(1<<DDL1);		// ECHO input
-
-
-	/*  */
-}
-
 
 int main(void)
 {
@@ -101,7 +72,6 @@ int main(void)
 	ypr[0]=0;
 	ypr[1]=0;
 	ypr[2]=0;
-
 	sensors_ptr=ypr;
 
 	uint8_t line1[17];
@@ -111,10 +81,7 @@ int main(void)
 
 	//ROUTINE OF READY BUTTOM
 
-	Sched_AddT(readData, 50, 15, 2);
-	Sched_AddT(robotMotion, 55, 5, 3);
-	Sched_AddT(sonarDistance, 45, 5, 1);
-	Sched_AddT(lcdRefresh, 65, 10, 4);
+	Sched_Tasks();
 
 	while(1){
 		// infinite loop

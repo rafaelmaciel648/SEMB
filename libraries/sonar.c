@@ -40,7 +40,7 @@ ISR (TIMER5_CAPT_vect)
 	}
 	else 								// On falling edge
 	{
-		TCCR5B |= (1<<ICES5);			// Next time detect falling edge
+		TCCR5B |= (1<<ICES5);			// Next time detect rising edge
 		falling = ICR5; 				// Save current count
 
 		time_us = ( (uint32_t)falling + ( 65535 * timer5_overflow_count) ) * 0.5;
